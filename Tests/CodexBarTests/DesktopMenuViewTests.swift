@@ -48,6 +48,17 @@ struct DesktopMenuViewTests {
         #expect(DesktopMenuView.normalizedTab(.debug, debugMenuEnabled: true) == .debug)
     }
 
+    @Test
+    func `filters tabs by title and subtitle`() {
+        #expect(DesktopMenuView.filteredTabs(searchText: "provider", debugMenuEnabled: false) == [
+            .providers,
+        ])
+        #expect(DesktopMenuView.filteredTabs(searchText: "logging", debugMenuEnabled: false).isEmpty)
+        #expect(DesktopMenuView.filteredTabs(searchText: "logging", debugMenuEnabled: true) == [
+            .debug,
+        ])
+    }
+
     private static func makeSettingsStore(suite: String) -> SettingsStore {
         let defaults = UserDefaults(suiteName: suite)!
         defaults.removePersistentDomain(forName: suite)

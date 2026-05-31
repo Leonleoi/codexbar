@@ -1,6 +1,16 @@
 import AppKit
 import SwiftUI
 
+extension EnvironmentValues {
+    @Entry var desktopMenuCardPresentation: Bool = false
+}
+
+extension View {
+    func desktopMenuCardPresentation() -> some View {
+        self.environment(\.desktopMenuCardPresentation, true)
+    }
+}
+
 @MainActor
 struct PreferenceToggleRow: View {
     let title: String
@@ -31,6 +41,7 @@ struct SettingsSection<Content: View>: View {
     let caption: String?
     let contentSpacing: CGFloat
     private let content: () -> Content
+    @Environment(\.desktopMenuCardPresentation) private var usesDesktopMenuCardPresentation
 
     init(
         title: String? = nil,
@@ -45,10 +56,13 @@ struct SettingsSection<Content: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: self.usesDesktopMenuCardPresentation ? 12 : 10) {
             if let title, !title.isEmpty {
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(
+                        self.usesDesktopMenuCardPresentation
+                            ? .headline.weight(.semibold)
+                            : .subheadline.weight(.semibold))
             }
             if let caption {
                 Text(caption)
@@ -60,6 +74,18 @@ struct SettingsSection<Content: View>: View {
                 self.content()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(self.usesDesktopMenuCardPresentation ? 16 : 0)
+        .background {
+            if self.usesDesktopMenuCardPresentation {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color(nsColor: .controlBackgroundColor).opacity(0.58))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(.white.opacity(0.12), lineWidth: 0.8)
+                    }
+                    .shadow(color: .black.opacity(0.025), radius: 8, y: 4)
+            }
         }
     }
 }
