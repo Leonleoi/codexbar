@@ -2,6 +2,12 @@
 
 > Every AI coding limit, in your menu bar.
 
+> This repository is a customized build based on the original
+> [steipete/CodexBar](https://github.com/steipete/CodexBar) project. This
+> version adds the Liquid Glass-inspired desktop settings menu, keeps the
+> original menu bar workflow, and includes rendering optimizations for the new
+> desktop UI.
+
 [![Latest release](https://img.shields.io/github/v/release/steipete/CodexBar?style=flat-square&color=0a0a0c)](https://github.com/steipete/CodexBar/releases/latest)
 [![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0a0a0c?style=flat-square)](https://github.com/steipete/CodexBar/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-steipete%2Ftap%2Fcodexbar-orange?style=flat-square)](https://github.com/steipete/homebrew-tap)
@@ -28,7 +34,9 @@ Tiny macOS 14+ menu bar app that keeps **AI coding-provider limits visible** and
 - macOS 14+ (Sonoma)
 
 ### GitHub Releases
-Download: <https://github.com/steipete/CodexBar/releases>
+Download this customized build: <https://github.com/Leonleoi/codexbar/releases>
+
+Original upstream releases: <https://github.com/steipete/CodexBar/releases>
 
 ### Homebrew
 ```bash
