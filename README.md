@@ -21,6 +21,54 @@ Tiny macOS 14+ menu bar app that keeps **AI coding-provider limits visible** and
 
 <img src="codexbar.png" alt="CodexBar menu popover with provider tiles, usage bars, and reset countdowns" width="520" />
 
+## 中文说明 / 选项翻译
+
+这是基于 [steipete/CodexBar](https://github.com/steipete/CodexBar) 修改的自定义版本。它保留原来的 macOS 状态栏菜单，同时增加一个 Liquid Glass 风格的桌面设置菜单，方便集中管理所有功能和 provider 设置。
+
+### 中文快速安装
+- 下载自定义版本：<https://github.com/Leonleoi/codexbar/releases>
+- 系统要求：macOS 14+ (Sonoma)
+- 首次运行后，打开 `Settings -> Providers`，启用你正在使用的 AI 服务。
+- 如果某个 provider 需要 API key、OAuth、浏览器 cookie 或本地 CLI 登录，请按对应设置项完成授权。
+
+### 常用选项翻译
+| English | 中文 |
+| --- | --- |
+| Settings | 设置 |
+| General | 通用 |
+| Providers | 服务提供商 |
+| Display | 显示 |
+| Advanced | 高级 |
+| About | 关于 |
+| Debug | 调试 |
+| Refresh usage | 刷新用量 |
+| Launch at login | 登录时启动 |
+| Notifications | 通知 |
+| Menu bar | 状态栏 |
+| Merge Icons | 合并图标 |
+| Provider switcher | 服务切换器 |
+| API key | API 密钥 |
+| Browser cookies | 浏览器 Cookie |
+| OpenAI cookies | OpenAI Cookie |
+| Automatic | 自动 |
+| Manual | 手动 |
+| Disable Keychain access | 禁用钥匙串访问 |
+| Full Disk Access | 完全磁盘访问权限 |
+| Reset countdown | 重置倒计时 |
+| Session quota | 会话额度 |
+| Weekly reset | 每周重置 |
+| Credit balance | 余额 / 点数余额 |
+| Cost scan | 成本扫描 |
+| Provider status | 服务状态 |
+| Desktop menu | 桌面菜单 |
+
+### 功能说明
+- `Providers`：启用或关闭 Codex、OpenAI、Claude、Cursor、Gemini、Copilot 等服务。
+- `Display`：调整状态栏图标、文字、用量条、重置时间和合并图标模式。
+- `Advanced`：诊断、路径、钥匙串访问和专家选项。
+- `Desktop menu`：本版本新增的桌面端设置菜单，包含原有设置功能，并保留状态栏菜单。
+- `Refresh usage`：手动刷新当前 provider 的用量、余额、额度和状态。
+
 ## Why
 
 - **Plan around resets.** Per-provider session, weekly, and monthly windows with countdowns to the next reset — stop guessing whether to start that long task.
