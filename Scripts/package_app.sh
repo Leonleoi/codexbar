@@ -456,6 +456,12 @@ if [[ -d "${APP}/Contents/PlugIns/CodexBarWidget.appex" ]]; then
     "$APP/Contents/PlugIns/CodexBarWidget.appex"
 fi
 
+# Nested signing can cause FinderInfo/resource-fork metadata to reappear on
+# copied Xcode products in File Provider-backed directories. Strip it
+# immediately before sealing the top-level app bundle.
+xattr -cr "$APP"
+find "$APP" -name '._*' -delete
+
 # Finally sign the app bundle itself
 codesign "${CODESIGN_ARGS[@]}" \
   --entitlements "$APP_ENTITLEMENTS" \

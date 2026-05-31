@@ -98,6 +98,14 @@ struct CodexBarApp: App {
         }
         .defaultSize(width: PreferencesTab.general.preferredWidth, height: PreferencesTab.general.preferredHeight)
         .windowResizability(.contentSize)
+        .commands {
+            CommandGroup(after: .appSettings) {
+                Button("Open Desktop Menu") {
+                    NotificationCenter.default.post(name: .codexbarOpenDesktopMenu, object: nil)
+                }
+                .keyboardShortcut(",", modifiers: [.command, .shift])
+            }
+        }
     }
 
     private func openSettings(tab: PreferencesTab) {
@@ -357,6 +365,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var preferencesSelection: PreferencesSelection?
     private var managedCodexAccountCoordinator: ManagedCodexAccountCoordinator?
     private var codexAccountPromotionCoordinator: CodexAccountPromotionCoordinator?
+    private var desktopMenuWindowController: DesktopMenuWindowController?
     private var hasInstalledWeeklyLimitResetObserver = false
     var terminateActiveProcessesForAppShutdown: () -> Void = {
         TTYCommandRunner.terminateActiveProcessesForAppShutdown()
@@ -391,6 +400,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 object: nil)
             self.hasInstalledWeeklyLimitResetObserver = true
         }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.handleOpenSettingsNotification(_:)),
+            name: .codexbarOpenSettings,
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.handleOpenDesktopMenuNotification(_:)),
+            name: .codexbarOpenDesktopMenu,
+            object: nil)
+        self.runWindowAutomationProbeIfRequested()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -418,6 +438,70 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 "originKnown": origin == nil ? "0" : "1",
             ])
         self.confettiOverlayController.play(originInScreen: origin)
+    }
+
+    @objc private func handleOpenSettingsNotification(_ notification: Notification) {
+        let tab = self.preferencesTab(from: notification) ?? .general
+        self.presentDesktopMenu(tab: tab)
+    }
+
+    @objc private func handleOpenDesktopMenuNotification(_ notification: Notification) {
+        let tab = self.preferencesTab(from: notification) ?? self.preferencesSelection?.tab ?? .general
+        self.presentDesktopMenu(tab: tab)
+    }
+
+    private func preferencesTab(from notification: Notification) -> PreferencesTab? {
+        guard let rawValue = notification.userInfo?["tab"] as? String else { return nil }
+        return PreferencesTab(rawValue: rawValue)
+    }
+
+    private func presentDesktopMenu(tab: PreferencesTab) {
+        guard let settings,
+              let store,
+              let selection = self.preferencesSelection,
+              let managedCodexAccountCoordinator,
+              let codexAccountPromotionCoordinator
+        else {
+            CodexBarLog.logger(LogCategories.app)
+                .error("Desktop menu requested before dependencies were configured.")
+            return
+        }
+
+        selection.tab = DesktopMenuView.normalizedTab(tab, debugMenuEnabled: settings.debugMenuEnabled)
+
+        if self.desktopMenuWindowController == nil {
+            self.desktopMenuWindowController = DesktopMenuWindowController(
+                rootView: DesktopMenuView(
+                    settings: settings,
+                    store: store,
+                    updater: self.updaterController,
+                    selection: selection,
+                    managedCodexAccountCoordinator: managedCodexAccountCoordinator,
+                    codexAccountPromotionCoordinator: codexAccountPromotionCoordinator,
+                    runProviderLoginFlow: { [weak self] provider in
+                        await self?.runProviderLoginFlow(provider)
+                    }))
+        }
+
+        self.desktopMenuWindowController?.show()
+    }
+
+    private func runWindowAutomationProbeIfRequested() {
+        guard let request = ProcessInfo.processInfo.environment["CODEXBAR_AUTOMATION_OPEN_WINDOW"] else { return }
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            switch request {
+            case "desktop-menu":
+                NotificationCenter.default.post(name: .codexbarOpenDesktopMenu, object: nil)
+            case "settings":
+                NotificationCenter.default.post(
+                    name: .codexbarOpenSettings,
+                    object: nil,
+                    userInfo: ["tab": PreferencesTab.general.rawValue])
+            default:
+                break
+            }
+        }
     }
 
     /// Use the classic (non-Liquid Glass) app icon on macOS versions before 26.

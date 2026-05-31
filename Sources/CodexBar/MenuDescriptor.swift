@@ -30,6 +30,7 @@ struct MenuDescriptor {
 
     enum MenuActionSystemImage: String {
         case refresh = "arrow.clockwise"
+        case desktopMenu = "rectangle.3.group"
         case dashboard = "chart.bar"
         case statusPage = "waveform.path.ecg"
         case changelog = "list.bullet.rectangle"
@@ -53,6 +54,7 @@ struct MenuDescriptor {
     enum MenuAction: Equatable {
         case installUpdate
         case refresh
+        case desktopMenu
         case refreshAugmentSession
         case dashboard
         case statusPage
@@ -582,6 +584,7 @@ struct MenuDescriptor {
         }
         entries.append(contentsOf: [
             .action(L("Refresh"), .refresh),
+            .action(L("Open Desktop Menu"), .desktopMenu),
             .action(L("Settings..."), .settings),
             .action(L("About CodexBar"), .about),
             .action(L("Quit"), .quit),
@@ -695,6 +698,7 @@ extension MenuDescriptor.MenuAction {
         case .installUpdate, .settings, .about, .quit:
             nil
         case .refresh: MenuDescriptor.MenuActionSystemImage.refresh.rawValue
+        case .desktopMenu: MenuDescriptor.MenuActionSystemImage.desktopMenu.rawValue
         case .refreshAugmentSession: MenuDescriptor.MenuActionSystemImage.refresh.rawValue
         case .dashboard: MenuDescriptor.MenuActionSystemImage.dashboard.rawValue
         case .statusPage: MenuDescriptor.MenuActionSystemImage.statusPage.rawValue
